@@ -31,11 +31,11 @@ async def send_message():
 @bot.event
 async def on_ready():
     print(f"Bot ready: {bot.user} (guilds: {len(bot.guilds)})")
+    # Only add the job once
     if not scheduler.running:
-        # 🔄 for testing: run send_message every 1 minute
-        scheduler.add_job(send_message, "interval", minutes=1)
+        # Wed & Fri at 12:00 Vancouver time. Adjust hour/minute as needed.
+        scheduler.add_job(send_message, "cron", day_of_week="wed,fri", hour=12, minute=0, timezone=TZ)
         scheduler.start()
-
 
 # Simple HTTP endpoint so Render's Web Service detects a bound port
 async def handle(request):
@@ -60,4 +60,3 @@ if __name__ == "__main__":
         asyncio.run(start_webserver_and_bot())
     except KeyboardInterrupt:
         print("Shutting down")
-
